@@ -23,10 +23,14 @@ struct AppleWatchView: View {
             Button {
                 viewModel.startAppleWatchHeartRateMonitoring()
             } label: {
-                Text("-> Start monitoring")
+                Text("Start monitoring")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.white)
             }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 32)
+            .background(Color.black.clipShape(RoundedRectangle(cornerRadius: 100)))
         }
     }
 }

@@ -22,28 +22,36 @@ final class WatchViewModel: ObservableObject {
         Task {
             do {
                 try await monitor.requestAuthorization()
-                DispatchQueue.main.async {
-                    self.isAuthorized = true
-                }
+                await updateAuthorisation(true)
                 monitor.startHeartRateMonitoring()
             } catch {
                 print("Failed to get authorization: \(error.localizedDescription)")
-                DispatchQueue.main.async {
-                    self.isAuthorized = false
-                }
+                await updateAuthorisation(false)
             }
         }
+    }
+    
+    @MainActor
+    func updateAuthorisation(_ authorized: Bool) {
+        self.isAuthorized = authorized
+    }
+    
+    @MainActor
+    func updateHeartRate(_ heartRate: Double) {
+        self.heartRate = heartRate
     }
 }
 
 extension WatchViewModel: HeartRateMonitorDelegate {
     func didReceiveHeartRate(_ heartRate: Double) {
-        self.heartRate = heartRate
+        Task {
+            await updateHeartRate(heartRate)
+        }
     }
     
     func authorizationStatusChanged(_ isAuthorized: Bool) {
-        DispatchQueue.main.async {
-            self.isAuthorized = isAuthorized
+        Task {
+            await updateAuthorisation(true)
         }
     }
 }

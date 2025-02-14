@@ -99,8 +99,9 @@ class HeartRateMonitor: NSObject, WCSessionDelegate {
             }
             
             let heartRate = heartRateSample.quantity.doubleValue(for: HKUnit(from: "count/min"))
-            print("Latest Heart Rate: \(heartRate)")
+            
             self?.sendHeartRateToiOS(heartRate)
+            self?.delegate?.didReceiveHeartRate(heartRate)
         }
         
         healthStore.execute(query)

@@ -11,7 +11,7 @@ struct HeartbeatView: View {
     @State private var isAnimating = false
     
     var body: some View {
-        HStack(spacing: 8) {
+        HStack {
             Text(Image(systemName: "heart.fill"))
                 .font(.system(size: 44))
                 .rotationEffect(.degrees(-30))
@@ -24,13 +24,33 @@ struct HeartbeatView: View {
                 .onAppear {
                     isAnimating = true
                 }
+
             Text("Listen To\nYou Heart")
                 .font(.system(size: 32, weight: .bold))
+                .minimumScaleFactor(0.2)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 @available(iOS 17.0, watchOS 10.0, *)
 #Preview {
-    HeartbeatView()
+    VStack {
+        HeartbeatView()
+
+        Button {
+            //viewModel.startMonitoring()
+        } label: {
+            Text("Start")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(.black)
+        }
+        .background(
+            Color.white
+                .clipShape(RoundedRectangle(cornerRadius: 100))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        )
+    }
 }

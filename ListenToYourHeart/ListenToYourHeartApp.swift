@@ -6,12 +6,19 @@
 //
 
 import SwiftUI
+import WatchConnectivity
 
 @main
 struct ListenToYourHeartApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onAppear {
+                    if WCSession.isSupported() {
+                        let session = WCSession.default
+                        session.activate()
+                    }
+                }
         }
     }
 }

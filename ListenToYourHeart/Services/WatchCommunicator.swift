@@ -25,7 +25,7 @@ class WatchCommunicator: NSObject, WCSessionDelegate {
     }
     
     func startHeartRateMonitoring() {
-        guard let session = session, session.isReachable else {
+        guard let session = session else {
             delegate?.watchConnectionStatusChanged(false)
             print("Apple Watch is not reachable")
             return
@@ -54,7 +54,6 @@ class WatchCommunicator: NSObject, WCSessionDelegate {
         }
     }
     
-    // Required WCSessionDelegate methods
-    func sessionDidBecomeInactive(_ session: WCSession) {}
-    func sessionDidDeactivate(_ session: WCSession) {}
-} 
+    func sessionDidBecomeInactive(_ session: WCSession) { }
+    func sessionDidDeactivate(_ session: WCSession) { }
+}

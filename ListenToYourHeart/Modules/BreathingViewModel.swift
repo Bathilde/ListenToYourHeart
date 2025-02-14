@@ -21,14 +21,28 @@ class BreathingViewModel: ObservableObject {
     func startAppleWatchHeartRateMonitoring() {
         watchCommunicator.startHeartRateMonitoring()
     }
+    
+    @MainActor
+    func updateConnected(_ isAppleWatchConnected: Bool) {
+        self.isAppleWatchConnected = isAppleWatchConnected
+    }
+    
+    @MainActor
+    func updateHeartRate(_ heartRate: Double) {
+        self.heartRate = heartRate
+    }
 }
 
 extension BreathingViewModel: WatchCommunicatorDelegate {
     func didReceiveHeartRate(_ heartRate: Double) {
-        self.heartRate = heartRate
+        Task {
+            await updateHeartRate(heartRate)
+        }
     }
     
     func watchConnectionStatusChanged(_ isConnected: Bool) {
-        self.isAppleWatchConnected = isConnected
+        Task {
+            await updateConnected(isConnected)
+        }
     }
 }

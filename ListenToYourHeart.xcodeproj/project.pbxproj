@@ -49,11 +49,21 @@
 			);
 			target = 366316602D36A76F0035E3F9 /* ListenToYourHeart Watch App */;
 		};
+		36657BB62D5F621E001E66FD /* Exceptions for "ListenToYourHeart" folder in "ListenToYourHeart" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 366315DA2D369FD60035E3F9 /* ListenToYourHeart */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		366315DD2D369FD60035E3F9 /* ListenToYourHeart */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				36657BB62D5F621E001E66FD /* Exceptions for "ListenToYourHeart" folder in "ListenToYourHeart" target */,
+			);
 			path = ListenToYourHeart;
 			sourceTree = "<group>";
 		};

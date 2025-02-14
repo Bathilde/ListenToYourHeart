@@ -62,9 +62,7 @@ class CameraViewModel: ObservableObject {
                 
                 heartRateDetector.configureCaptureSession(session)
                 
-                DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                    self?.session.startRunning()
-                }
+                session.startRunning()
             } catch {
                 print("Failed to setup camera: \(error.localizedDescription)")
             }
