@@ -8,69 +8,67 @@
 import AVFoundation
 import SwiftUI
 
-class CameraViewModel: ObservableObject {
-    @Published var isAuthorized = false
-    @Published var session = AVCaptureSession()
-    @Published var heartRate: Double?
-    
+@Observable
+class CameraViewModel {
+    enum Status {
+        case started
+        case authorized
+        case denied
+        case none
+    }
+
+    var status = Status.none
+    let session = AVCaptureSession()
+    var heartRate: Double?
+
     private let heartRateDetector = HeartRateByCamera()
-    
+    private let manager: CameraManager
+
     init() {
+        manager = CameraManager(captureSession: session)
         heartRateDetector.delegate = self
-        checkPermission()
     }
-    
+
+    @MainActor
     func checkPermission() {
-        switch AVCaptureDevice.authorizationStatus(for: .video) {
-        case .authorized:
-            isAuthorized = true
+        manager.checkPermissions()
+        switch manager.status {
+        case .configured:
+            self.status = .authorized
+        case .failed, .unauthorized:
+            self.status = .denied
+        case .unconfigured:
+            self.status = .none
+        }
+    }
+
+    @MainActor
+    private func setAccessGranting(_ granted: Bool) {
+        status = granted ? .authorized : .denied
+        if granted {
             setupCamera()
-        case .notDetermined:
-            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                DispatchQueue.main.async {
-                    self?.isAuthorized = granted
-                    if granted {
-                        self?.setupCamera()
-                    }
-                }
-            }
-        case .denied, .restricted:
-            isAuthorized = false
-        @unknown default:
-            isAuthorized = false
         }
     }
-    
-    private func setupCamera() {
-        Task {
-            guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
-                print("Failed to get camera device")
-                return
-            }
-            
-            do {
-                let input = try AVCaptureDeviceInput(device: device)
-                if session.canAddInput(input) {
-                    session.addInput(input)
-                }
-                
-                if device.hasTorch {
-                    try device.lockForConfiguration()
-                    device.torchMode = .on
-                    device.unlockForConfiguration()
-                }
-                
-                heartRateDetector.configureCaptureSession(session)
-                
-                session.startRunning()
-            } catch {
-                print("Failed to setup camera: \(error.localizedDescription)")
-            }
-        }
+
+    @MainActor
+    func setupCamera() {
+        manager.configure()
+        heartRateDetector.configureCaptureSession(session)
+        manager.start()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            self.manager.toggleTorch()
+        })
+        status = .started
     }
-    
+
+    @MainActor
     func startMonitoring() {
-        if !isAuthorized {
+        switch status {
+        case .started:
+            break // do nothing
+        case .authorized:
+            setupCamera()
+        case .denied, .none:
             checkPermission()
         }
     }

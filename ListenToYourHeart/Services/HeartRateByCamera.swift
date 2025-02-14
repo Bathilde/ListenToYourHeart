@@ -9,7 +9,7 @@ import AVFoundation
 import CoreImage
 
 protocol HeartRateByCameraDelegate: AnyObject {
-    func heartRateUpdated(_ bpm: Double)
+   @MainActor func heartRateUpdated(_ bpm: Double)
 }
 
 class HeartRateByCamera: NSObject, AVCaptureVideoDataOutputSampleBufferDelegate {

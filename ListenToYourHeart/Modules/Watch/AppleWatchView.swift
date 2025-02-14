@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AppleWatchView: View {
-    @ObservedObject var viewModel: BreathingViewModel
+    @Binding var viewModel: BreathingViewModel
     
     var body: some View {
         VStack(spacing: 16) {
@@ -23,7 +23,7 @@ struct AppleWatchView: View {
             Button {
                 viewModel.startAppleWatchHeartRateMonitoring()
             } label: {
-                Text("Start monitoring")
+                Text("Start Monitoring (Apple Watch)")
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(.white)
             }

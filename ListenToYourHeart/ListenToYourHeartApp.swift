@@ -10,9 +10,12 @@ import WatchConnectivity
 
 @main
 struct ListenToYourHeartApp: App {
+    let viewModel = BreathingViewModel()
+    let cameraViewModel = CameraViewModel()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(viewModel: viewModel, cameraViewModel: cameraViewModel)
                 .onAppear {
                     if WCSession.isSupported() {
                         let session = WCSession.default

@@ -9,8 +9,9 @@ import SwiftUI
 import WatchConnectivity
 
 struct ContentView: View {
-    @StateObject var viewModel = BreathingViewModel()
-    
+    @State var viewModel: BreathingViewModel
+    @State var cameraViewModel: CameraViewModel
+
     var body: some View {
         VStack(spacing: 32) {
             HeartbeatView()
@@ -18,18 +19,14 @@ struct ContentView: View {
             
             Spacer()
             
-            if WCSession.isSupported() {
-                AppleWatchView(viewModel: viewModel)
-                    .padding(.bottom, 32)
-            } else {
-                CameraView()
+            if viewModel.isAppleWatchConnected {
+                AppleWatchView(viewModel: $viewModel)
                     .padding(.bottom, 32)
             }
+            
+            CameraView(viewModel: $cameraViewModel)
+                .padding(.bottom, 32)
         }
         .padding(32)
     }
-}
-
-#Preview {
-    ContentView()
 }

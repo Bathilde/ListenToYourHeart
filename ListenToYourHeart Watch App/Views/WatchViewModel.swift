@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-final class WatchViewModel: ObservableObject {
-    @Published var heartRate: Double?
-    @Published var isAuthorized: Bool = false
+@Observable
+final class WatchViewModel {
+    var heartRate: Double?
+    var isAuthorized: Bool = false
     
     private var monitor = HeartRateMonitor()
     

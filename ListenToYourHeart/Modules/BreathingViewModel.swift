@@ -7,9 +7,10 @@
 
 import WatchConnectivity
 
-class BreathingViewModel: ObservableObject {
-    @Published var heartRate: Double?
-    @Published var isAppleWatchConnected: Bool = false
+@Observable
+class BreathingViewModel {
+    var heartRate: Double?
+    var isAppleWatchConnected: Bool = false
     
     private let watchCommunicator: WatchCommunicator
     

@@ -5,24 +5,40 @@
 //  Created by Bathilde Rocchia on 14/01/2025.
 //
 
+import UIKit
 import SwiftUI
 import AVFoundation
+import CoreImage
 
-struct CameraPreviewView: UIViewRepresentable {
-    let session: AVCaptureSession
-    
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView(frame: CGRect.zero)
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer.videoGravity = .resizeAspectFill
-        view.layer.addSublayer(previewLayer)
-        
-        return view
-    }
-    
-    func updateUIView(_ uiView: UIView, context: Context) {
-        if let layer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
-            layer.frame = uiView.bounds
+final class AVCaptureVideoViewController: UIViewController {
+    var previewLayer: AVCaptureVideoPreviewLayer?
+    private weak var session: AVCaptureSession?
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        guard let session, previewLayer == nil else { return }
+        previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer?.videoGravity = .resizeAspectFill
+        previewLayer?.frame = self.view.frame
+        if let previewLayer {
+            self.view.layer.addSublayer(previewLayer)
         }
     }
+
+    func setup(session: AVCaptureSession) {
+        self.session = session
+    }
+}
+
+struct CameraPreviewView: UIViewControllerRepresentable {
+    var session: AVCaptureSession
+
+    func makeUIViewController(context: Context) -> AVCaptureVideoViewController {
+        let controller = AVCaptureVideoViewController()
+        controller.setup(session: session)
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: AVCaptureVideoViewController, context: Context) { }
 }

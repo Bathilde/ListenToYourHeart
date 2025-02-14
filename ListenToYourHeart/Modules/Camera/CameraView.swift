@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct CameraView: View {
-    @StateObject private var viewModel = CameraViewModel()
+    @Binding var viewModel: CameraViewModel
     
     var body: some View {
         VStack(spacing: 16) {
-            if viewModel.isAuthorized {
+            switch viewModel.status {
+            case .started:
                 CameraPreviewView(session: viewModel.session)
                     .ignoresSafeArea()
-                
+
                 if let heartRate = viewModel.heartRate {
                     Text("Heart Rate: \(Int(heartRate)) BPM")
                         .font(.title2)
@@ -24,11 +26,23 @@ struct CameraView: View {
                     Text("Place your finger on the camera lens")
                         .padding()
                 }
-            } else {
+            case .authorized:
+                Button {
+                    viewModel.setupCamera()
+                } label: {
+                    Text("Start camera")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 32)
+                .background(Color.black.clipShape(RoundedRectangle(cornerRadius: 100)))
+            default:
                 VStack(spacing: 20) {
                     Text("Authorize the camera to access this feature")
                         .multilineTextAlignment(.center)
-                    
+
                     Button {
                         viewModel.startMonitoring()
                     } label: {
